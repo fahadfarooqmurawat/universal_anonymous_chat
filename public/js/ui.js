@@ -7,8 +7,8 @@ function monitorMessage(e){
     sendMessage(e);
 }
 function formatDate(date){
-  return 'date';
-  // return date.getHours() date.getMinutes date.getSeconds
+  date = new Date(date);
+  return `${date.getHours()}:${date.getMinutes()}:${date.getSeconds()}:${date.getMilliseconds()}`;
 }
 function calculateLatency({gen_time,end_time}){
   return end_time - gen_time;
@@ -20,28 +20,48 @@ function clearMyMessage(){
   document.getElementById('message').value = '';
 }
 function renderOthersMessage({message,user_name,gen_time,server_time,end_time}){
-    let str = `<div class="white-text chat-box-message">
-              <p class="chat-box-message-content">
-              <span class="user-name">${user_name}</span>
-              <span class="user-message">${message}</span>
-              <span class="user-message secondary-content">${formatDate(gen_time)} ${formatDate(server_time)} ${formatDate(end_time)}</span>
-              </p>
-            </div>`;
-    document.getElementById('chat-box').innerHTML += str;
+  let arr = [];
+  arr.push('<div class="white-text chat-box-message">');
+  arr.push('<p class="chat-box-message-content">');
+  if (settings.show_user_name)
+    arr.push(`<span class="user-name">${user_name}</span>`);
+  arr.push(`<span class="user-message">${message}</span>`);
+  arr.push('<span class="user-message secondary-content">');
+  if (settings.show_gen_time)
+    arr.push(`gen_time:${formatDate(gen_time)} `);
+  if (settings.show_server_time)
+    arr.push(`server_time:${formatDate(server_time)} `);
+  if (settings.show_end_time)
+    arr.push(`end_time:${formatDate(end_time)} `);
+  if (settings.show_latency)
+    arr.push(`latency:${calculateLatency({gen_time,end_time})} ms `)
+  arr.push('</span></p></div>');
+
+  document.getElementById('chat-box').innerHTML += arr.join('');
 }
+
 function renderMyMessage({message,gen_time,server_time,end_time}){
-    let str = `<div class="white-text chat-box-message">
-              <p class="chat-box-message-content">
-              <span class="user-name red-text">You</span>
-              <span class="user-message">${message}</span>
-              <span class="user-message secondary-content">${(gen_time)} ${(server_time)} ${(end_time)}</span>
-              </p>
-            </div>`;
-    document.getElementById('chat-box').innerHTML += str;
+  let arr= [];
+  arr.push('<div class="white-text chat-box-message">');
+  arr.push('<p class="chat-box-message-content">');
+  if (settings.show_user_name)
+    arr.push('<span class="user-name red-text">You</span>');
+  arr.push(`<span class="user-message">${message}</span>`);
+  arr.push('<span class="user-message secondary-content">');
+  if (settings.show_gen_time)
+    arr.push(`gen_time:${formatDate(gen_time)} `);
+  if (settings.show_server_time)
+    arr.push(`server_time:${formatDate(server_time)} `);
+  if (settings.show_end_time)
+    arr.push(`end_time:${formatDate(end_time)} `);
+  if (settings.show_latency)
+    arr.push(`latency:${calculateLatency({gen_time,end_time})} ms `)
+  arr.push('</span></p></div>');
+  document.getElementById('chat-box').innerHTML += arr.join('');
 }
 function renderUserConnected({user_name="Anonymous"}){
-  	let str = `<div class="white-text chat-message">
-              <p class="chat-message-content">
+  	let str = `<div class="white-text chat-box-message">
+              <p class="chat-box-message-content">
               <span class="user-name">${user_name}</span>
               <span class="user-message">connected</span>
               </p>
@@ -49,8 +69,8 @@ function renderUserConnected({user_name="Anonymous"}){
     document.getElementById('chat-box').innerHTML += str;
 }
 function renderUserDisconnected({user_name="Anonymous"}){
-  	let str = `<div class="white-text chat-message">
-              <p class="chat-message-content">
+  	let str = `<div class="white-text chat-box-message">
+              <p class="chat-box-message-content">
               <span class="user-name">${user_name}</span>
               <span class="user-message">disconnected</span>
               </p>
@@ -58,8 +78,8 @@ function renderUserDisconnected({user_name="Anonymous"}){
   	document.getElementById('chat-box').innerHTML += str;
 }
 function renderUserRename({old_name,new_name}){
-  	let str = `<div class="white-text chat-message">
-              <p class="chat-message-content">
+  	let str = `<div class="white-text chat-box-message">
+              <p class="chat-box-message-content">
               <span class="user-name">${old_name}</span>
               <span class="user-message">changed their name to </span>
               <span class="user-name">${new_name}</span>

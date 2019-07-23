@@ -3,57 +3,12 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
-  <link rel="shortcut icon" type="image/png" href="/favicon.png" />
+  <link rel="shortcut icon" href="/favicon.png" type="image/png">
   <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.13/css/all.css" integrity="sha384-DNOHZ68U8hZfKXOrtjWvjxusGo9WQnrNx2sqG0tfsghAvtVlRW3tvkXWZh58N9jp" crossorigin="anonymous">
   <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0-beta/css/materialize.min.css">
+  <link rel="stylesheet" href="/public/css/style.css" type="text/css">
   <title>Universal Chat</title>
-  <style>
-    .chat-box{
-      background-color: black;
-      width: 100%;
-      height: 82%;
-      overflow-y: auto; 
-    }
-    .chat-box .chat-message{
-       margin: 10px;
-    }
-    .chat-box .chat-message-content{
-      display: inline;
-      padding: 5px 12px;
-    }
-    .user-name{
-      font-weight: bold;
-    }
-    .user-message{
-      padding: 5px 12px;
-    }
-    .message-box{
-      position: fixed;
-      left: 0;
-      bottom: 0;
-      width: 100%;
-      background-color: white;
-      color: black;
-    }
-
-    .message-box .row{
-      margin-bottom: 0px;
-    }
-    .message-box .input-field{
-      padding-right: 50px;
-      margin: 0;
-    }
-
-    .message-box #message{
-    }
-
-    .message-box #send{
-      position: absolute;
-      bottom: 11px;
-      right: 15px;
-    }
-  </style>
 </head>
 <body>
   <div class="navbar-fixed">
@@ -66,18 +21,18 @@
       </div>
     </nav>
   </div>
-  <div class="chat-box">
-    <div class="white-text chat-message">
-      <p class="chat-message-content">
-        <span class="user-name">fahad: </span>
+  <div id="chat-box">
+    <div class="white-text chat-box-message">
+      <p class="chat-box-message-content">
+        <span class="user-name">fahad </span>
         <span class="user-message">hello how are you</span>
       </p>
     </div>
   </div>
-  <div class="message-box">
+  <div id="message-box">
     <div class="row">
       <div class="input-field col s12">
-        <textarea id="textarea1" placeholder="Message" class="materialize-textarea"></textarea>
+        <textarea id="message" placeholder="Message" class="materialize-textarea"></textarea>
         <a id="send" href="#" class="">
           <i class="material-icons black-text">send</i>
         </a>
@@ -85,117 +40,8 @@
     </div>
   </div>
   <script src="/socket.io/socket.io.js"></script>
-  <script>
-    window.onload = ()=>{
-      document.getElementById('send').onclick = sendMessage;
-    };
-    var socket = io({
-      query:{
-        user_name:localStorage.user_name||'Anonymous'
-      }
-    });
-    socket.on('message',(message)=>{
-      console.log('got Message');
-      console.log(message);
-      renderOthersMessage(message);
-    });
-    socket.on('userconnected',(user)=>{
-      console.log('userconnected');
-      renderUserConnected(user);
-    });
-
-    socket.on('userdisconnected',(user)=>{
-      console.log('userdisconnected');
-      renderUserDisconnected(user);
-    });
-    socket.on('userrename',obj=>{
-      renderUserRename(obj);
-    });
-    function getMyMessage(){
-      return document.getElementById('textarea1').value;
-    }
-    function clearMyMessage(){
-      document.getElementById('textarea1').value = '';
-    }
-    function renderUserConnected(user){
-      let chatBox = document.querySelector('.chat-box');
-      let str = `<div class="white-text chat-message">
-                  <p class="chat-message-content">
-                  <span class="user-name">${user.user_name} </span>
-                  <span class="user-message">connected</span>
-                  </p>
-                </div>`;
-      chatBox.innerHTML += str;
-    }
-    function renderUserDisconnected(user){
-      let chatBox = document.querySelector('.chat-box');
-      let str = `<div class="white-text chat-message">
-                  <p class="chat-message-content">
-                  <span class="user-name">${user.user_name} </span>
-                  <span class="user-message">disconnected</span>
-                  </p>
-                </div>`;
-      chatBox.innerHTML += str;
-    }
-    function renderUserRename({old_name,new_name}){
-      let chatBox = document.querySelector('.chat-box');
-      let str = `<div class="white-text chat-message">
-                  <p class="chat-message-content">
-                  <span class="user-name">${old_name} </span>
-                  <span class="user-message">changed their name to </span>
-                  <span class="user-name">${new_name} </span>
-                  </p>
-                </div>`;
-      chatBox.innerHTML += str;  
-    }
-    function renderOthersMessage(message){
-      let chatBox = document.querySelector('.chat-box');
-      let str = `<div class="white-text chat-message">
-                  <p class="chat-message-content">
-                  <span class="user-name">${message.user_name}: </span>
-                  <span class="user-message white-text">${message.message}</span>
-                  </p>
-                </div>`;
-      chatBox.innerHTML += str;
-    }
-
-    function renderMyPendingMessage(message){
-      let chatBox = document.querySelector('.chat-box');
-      let str = `<div class="red-text chat-message">
-                  <p class="chat-message-content">
-                  <span class="user-name">You: </span>
-                  <span class="user-message white-text">${message}</span>
-                  </p>
-                </div>`;
-      chatBox.innerHTML += str;
-    }
-    function renderMySentMessage(message){
-      let chatBox = document.getElementByClass('chat-box');
-      let str = `<div class="red-text chat-message">
-                  <p class="chat-message-content">
-                  <span class="user-name">${message.user_name}: </span>
-                  <span class="user-message">${message.message}</span>
-                  </p>
-                </div>`;
-      chatBox.innerHTML += str;
-    }
-    function sendMessage(e){
-      console.log(e);
-      e.preventDefault();
-      let message = getMyMessage();
-      console.log('here');
-      console.log(message);
-      if (message){
-        renderMyPendingMessage(message);
-        clearMyMessage();
-        socket.emit('message',message,(err,result)=>{
-          console.log('CB');
-          console.log(err);
-          console.log(result);
-        // renderMyPendingMessage(message)
-        });
-      }
-    }
-  </script>
+  <script src="/public/js/ui.js"></script>
+  <script src="/public/js/io.js"></script>
+  <script src="/public/js/settings.js"></script>
 </body>
 </html>

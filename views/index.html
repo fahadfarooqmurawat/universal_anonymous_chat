@@ -1,0 +1,132 @@
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <link rel="shortcut icon" type="image/png" href="/favicon.png" />
+  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.13/css/all.css" integrity="sha384-DNOHZ68U8hZfKXOrtjWvjxusGo9WQnrNx2sqG0tfsghAvtVlRW3tvkXWZh58N9jp" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0-beta/css/materialize.min.css">
+  <title>Universal Chat</title>
+  <style>
+    .chat-box{
+      background-color: black;
+      width: 100%;
+      height: 82%;
+      overflow-y: auto; 
+    }
+    .chat-box .chat-message{
+       margin: 10px;
+    }
+    .chat-box .chat-message-content{
+      display: inline;
+      padding: 5px 12px;
+    }
+    .user-name{
+      font-weight: bold;
+    }
+    .user-message{
+      padding: 5px 12px;
+    }
+    .message-box{
+      position: fixed;
+      left: 0;
+      bottom: 0;
+      width: 100%;
+      background-color: white;
+      color: black;
+    }
+
+    .message-box .row{
+      margin-bottom: 0px;
+    }
+    .message-box .input-field{
+      padding-right: 50px;
+      margin: 0;
+    }
+
+    .message-box #message{
+    }
+
+    .message-box #send{
+      position: absolute;
+      bottom: 11px;
+      right: 15px;
+    }
+  </style>
+</head>
+<body>
+  <div class="navbar-fixed">
+    <nav>
+      <div class="nav-wrapper white">
+        <a href="#" class="brand-logo center black-text"><i class="material-icons black-text">trip_origin</i></a>
+        <ul class="right">
+          <li><a href="#"><i class="material-icons black-text">settings</i></a></li>
+        </ul>
+      </div>
+    </nav>
+  </div>
+  <div class="chat-box">
+    <div class="white-text chat-message">
+      <p class="chat-message-content">
+        <span class="user-name">fahad: </span>
+        <span class="user-message">hello how are you</span>
+      </p>
+    </div>
+    <div class="white-text chat-message">
+      <p class="chat-message-content">hello how are you</p>
+    </div>
+  </div>
+  <div class="message-box">
+    <div class="row">
+      <div class="input-field col s12">
+        <textarea id="textarea1" placeholder="Message" class="materialize-textarea"></textarea>
+        <a id="send" href="#" class="">
+          <i class="material-icons black-text">send</i>
+        </a>
+      </div>
+    </div>
+  </div>
+  <script src="/socket.io/socket.io.js"></script>
+  <script>
+    window.onload = ()=>{
+      document.getElementById('send').onclick = (e)=>{
+        console.log('e');
+        console.log(e);
+      };
+    };
+    // var socket = io({
+    //   query:{
+    //     user_name:'Fahad'
+    //   }
+    // });
+    // socket.on('message',(message)=>{});
+    function getMyMessage(){
+      return document.getElementById('message').innerHTML;
+    }
+    function clearMyMessage(){
+      document.getElementById('message').innerHTML = '';
+    }
+    function renderMyPendingMessage(message){
+      document.getElementByClass('chat-box');
+      let str = `<p><span class="user-name">${message.user_name}</span><span></span></p>`;
+    }
+    function renderMySentMessage(message){
+
+    }
+    function sendMessage(e){
+      console.log(e);
+      e.preventDefault();
+      let message = getMessage();
+      console.log(message);
+      if (message){
+        renderMyPendingMessage(message);
+      }
+      socket.emit('message',message,(err)=>{
+        console.log('CB');
+        renderMySentMessage(message)
+      });
+    }
+  </script>
+</body>
+</html>

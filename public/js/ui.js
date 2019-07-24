@@ -4,7 +4,9 @@ document.addEventListener('DOMContentLoaded', function() {
   setInterval(clearOldChatMessages,5000);
   document.getElementsByTagName('body')[0].onresize = onWindowResize;
   onWindowResize();
-  document.getElementById('send').onclick = sendMessage;
+  document.getElementById('test-start').onclick = startTest;
+  document.getElementById('open-test').onclick = openTest;
+  document.getElementById('send').onclick = sendMessageClicked;
   document.getElementById('settings').onclick = showSettings;
   document.getElementById('message').onkeypress = monitorMessage;
   document.getElementById('save-name').onclick = saveName;
@@ -16,8 +18,35 @@ document.addEventListener('DOMContentLoaded', function() {
     settings.set(this.id,this.checked);
   }
 });
+
+function sendMessageClicked(){
+  let message = getMyMessage();
+  sendMessage(message,()=>{
+    clearMyMessage();
+  });
+  document.getElementById('message').focus();
+}
+function startTest(){
+  let message = document.getElementById('test-message').value;
+  let count = document.getElementById('test-count').value;
+  console.log(message);
+  console.log(count);
+  M.Modal.getInstance(document.getElementById('modal-test'),{}).close();
+  M.Modal.getInstance(document.getElementById('modal-settings'),{}).close();
+  if (message && count >= 10 && count <= 300){
+    for (let i = 0;i<count;i++){
+      sendMessage(message);
+    }
+  }
+  else{
+    alert('Invalid message or count');
+  }
+}
+function openTest(){
+  M.Modal.getInstance(document.getElementById('modal-test'),{}).open();
+}
 function onWindowResize(){
-  document.getElementById('chat-box').style.height = innerHeight-120;
+  document.getElementById('chat-box').style.height = innerHeight-126;
   scrollToBottom();
 }
 function saveName(){
@@ -39,7 +68,7 @@ function clearOldChatMessages(){
 function monitorMessage(e){
   if (e.keyCode === 13){
     e.preventDefault();
-    sendMessage();
+    sendMessageClicked();
   }
 }
 function formatDate(date){

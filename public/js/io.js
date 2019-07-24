@@ -4,7 +4,6 @@ var socket = io({
   }
 });
 socket.once('welcome',({count})=>{
-  console.log('Welcome');
   renderWelcomeMessage({count});
 });
 socket.on('usermessage',({sender_id,message,user_name,gen_time,server_time})=>{
@@ -24,17 +23,12 @@ socket.on('userdisconnected',userObj=>{
 socket.on('userrename',userObj=>{
   renderUserRename(userObj);
 });
-function sendMessage(){
-  let message = getMyMessage();
+function sendMessage(message,cb){
   if (message){
-    //disable send
     socket.emit('message',{message,gen_time:Date.now()},err=>{
-      clearMyMessage();
-      //enable send
+      if (cb) cb();
     });
   }
-  document.getElementById('message').focus();
-  // console.log(document.getElementById('message'));
 }
 function updateName(){
   socket.emit('rename',{new_name:settings.getName()});

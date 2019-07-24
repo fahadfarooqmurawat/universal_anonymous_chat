@@ -12,6 +12,12 @@ var settings = (function(){
 		get:function(key){
 			if (localStorage[key]=="true") return true;
 			return false;
+		},
+		setChatBoxMessageLimit:function(value){
+			localStorage["message-limit"] = value;
+		},
+		getChatBoxMessageLimit:function(){
+			return localStorage["message-limit"] || 10;
 		}
 	};
 })();

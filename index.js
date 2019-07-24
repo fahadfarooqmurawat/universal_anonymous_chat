@@ -2,7 +2,7 @@ var express = require('express');
 var app = express();
 var http = require('http').createServer(app);
 var io = require('socket.io')(http);
-
+var connectedCount = 0;
 app.use('/public',express.static(__dirname + "/public/"));
 
 app.get('/',(req,res)=>{
@@ -15,8 +15,10 @@ io.use((socket,next)=>{
 });
 
 io.on('connection', (socket)=>{
+  connectedCount++;
 	console.log(`${socket.user_name} connected`);
   socket.on('disconnect', () => { 
+    connectedCount--;
     console.log(`${socket.user_name} disconnected`);
     socket.broadcast.emit('userdisconnected',{
       user_name:socket.user_name
@@ -38,6 +40,9 @@ io.on('connection', (socket)=>{
       new_name
     });
     socket.user_name = new_name;
+  });
+  socket.emit('welcome',{
+    count:connectedCount-1
   });
   socket.broadcast.emit('userconnected',{
     user_name:socket.user_name

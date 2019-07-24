@@ -3,7 +3,10 @@ var socket = io({
     user_name:settings.getName()
   }
 });
-
+socket.once('welcome',({count})=>{
+  console.log('Welcome');
+  renderWelcomeMessage({count});
+});
 socket.on('usermessage',({sender_id,message,user_name,gen_time,server_time})=>{
   if (sender_id === socket.id){
     renderMyMessage({message,gen_time,server_time,end_time:Date.now()});
@@ -30,6 +33,8 @@ function sendMessage(){
       //enable send
     });
   }
+  document.getElementById('message').focus();
+  // console.log(document.getElementById('message'));
 }
 function updateName(){
   socket.emit('rename',{new_name:settings.getName()});

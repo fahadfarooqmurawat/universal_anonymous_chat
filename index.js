@@ -15,18 +15,16 @@ io.use((socket,next)=>{
 });
 
 io.on('connection', (socket)=>{
-	console.log('a user connected');
-  console.log(socket.user_name);
+	console.log(`${socket.user_name} connected`);
   socket.on('disconnect', () => { 
-    console.log('disconnect');
-    console.log(socket.user_name);
+    console.log(`${socket.user_name} disconnected`);
     socket.broadcast.emit('userdisconnected',{
       user_name:socket.user_name
     });
   });
   socket.on('message',({message,gen_time},cb)=>{
     cb(null);
-    io.emit('message',{
+    io.emit('usermessage',{
       sender_id:socket.id,
       message,
       gen_time,
@@ -35,9 +33,7 @@ io.on('connection', (socket)=>{
     });
 	});
   socket.on('rename',({new_name})=>{
-    console.log('rename');
-    console.log(new_name);
-    socket.broadcast.emit('rename',{
+    socket.broadcast.emit('userrename',{
       old_name:socket.user_name,
       new_name
     });

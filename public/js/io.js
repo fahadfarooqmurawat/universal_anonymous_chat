@@ -1,10 +1,10 @@
 var socket = io({
   query:{
-    user_name:localStorage.user_name||'Anonymous'
+    user_name:settings.getName()
   }
 });
 
-socket.on('message',({sender_id,message,user_name,gen_time,server_time})=>{
+socket.on('usermessage',({sender_id,message,user_name,gen_time,server_time})=>{
   if (sender_id === socket.id){
     renderMyMessage({message,gen_time,server_time,end_time:Date.now()});
   }
@@ -21,8 +21,7 @@ socket.on('userdisconnected',userObj=>{
 socket.on('userrename',userObj=>{
   renderUserRename(userObj);
 });
-function sendMessage(e){
-  e.preventDefault();
+function sendMessage(){
   let message = getMyMessage();
   if (message){
     //disable send
@@ -31,4 +30,7 @@ function sendMessage(e){
       //enable send
     });
   }
+}
+function updateName(){
+  socket.emit('rename',{new_name:settings.getName()});
 }

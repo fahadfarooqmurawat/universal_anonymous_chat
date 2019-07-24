@@ -1,7 +1,17 @@
-var settings = {
-  show_user_name: localStorage.show_user_name || true, 
-  show_gen_time: localStorage.show_gen_time || true, 
-  show_server_time: localStorage.show_server_time || true, 
-  show_end_time: localStorage.show_end_time || true, 
-  show_latency: localStorage.show_latency || true
-};
+var settings = (function(){
+	return {
+		setName:function(value){
+			localStorage["user-name"] = value;
+		},
+		getName:function(){
+			return localStorage["user-name"] || "Anonymous";
+		},
+		set:function(key,value){
+			localStorage[key] = value;
+		},
+		get:function(key){
+			if (localStorage[key]=="true") return true;
+			return false;
+		}
+	};
+})();

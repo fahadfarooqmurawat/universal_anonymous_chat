@@ -16,10 +16,10 @@ io.use((socket,next)=>{
 
 io.on('connection', (socket)=>{
   connectedCount++;
-	console.log(`${socket.user_name} connected`);
+	console.log(`${new Date().toUTCString()} ${socket.user_name} connected`);
   socket.on('disconnect', () => { 
     connectedCount--;
-    console.log(`${socket.user_name} disconnected`);
+    console.log(`${new Date().toUTCString()} ${socket.user_name} disconnected`);
     socket.broadcast.emit('userdisconnected',{
       user_name:socket.user_name
     });
@@ -35,11 +35,13 @@ io.on('connection', (socket)=>{
     });
 	});
   socket.on('rename',({new_name})=>{
-    socket.broadcast.emit('userrename',{
-      old_name:socket.user_name,
-      new_name
-    });
-    socket.user_name = new_name;
+    if (new_name!=socket.user_name){
+      socket.broadcast.emit('userrename',{
+        old_name:socket.user_name,
+        new_name
+      });
+      socket.user_name = new_name;
+    }
   });
   socket.emit('welcome',{
     count:connectedCount-1
@@ -51,5 +53,10 @@ io.on('connection', (socket)=>{
 
 http.listen(3000, err=>{
   if (err) throw err;
-  console.log('listening on *:3000');
+  console.log(`${new Date().toUTCString()} listening on *:3000`);
+  setInterval(printStats,5000);
 });
+
+function printStats(){
+  console.log(`${new Date().toUTCString()} connected Users = ${connectedCount}`);
+}

@@ -18,6 +18,10 @@ var settings = (function(){
 		},
 		getChatBoxMessageLimit:function(){
 			return localStorage["message-limit"] || 10;
+		},
+		isFirstTime:function(){
+			console.log(localStorage['user-name']);
+			return localStorage['user-name']?false:true;
 		}
 	};
 })();

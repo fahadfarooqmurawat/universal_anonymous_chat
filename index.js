@@ -54,7 +54,7 @@ io.on('connection', (socket)=>{
 http.listen(8001, err=>{
   if (err) throw err;
   console.log(`${new Date().toUTCString()} listening on *:8001`);
-  setInterval(printStats,5000);
+  setInterval(printStats,60000);
 });
 
 function printStats(){

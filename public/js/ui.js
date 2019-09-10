@@ -17,8 +17,13 @@ var ui = (function(){
       checkBox.addEventListener('change',onChange_settingCheckBoxes);
     });
     onResize_window();
-    focusOnMessageBox();
     setInterval(clearOldChatMessages,1000);
+    console.log('here');
+    if (settings.isFirstTime()){
+      console.log('then here');
+      onClick_settings();
+    }
+    focusOnMessageBox();
   });
   function onClick_sendMessage(){
     focusOnMessageBox();
